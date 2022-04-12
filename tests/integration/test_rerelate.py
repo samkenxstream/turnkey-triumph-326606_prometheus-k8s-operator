@@ -65,7 +65,7 @@ async def test_build_and_deploy(ops_test: OpsTest, prometheus_charm, prometheus_
             application_name="grafana-agent",
             channel="edge",
         ),
-        # TODO: add traefik
+        # TODO: add traefik after fetch-lib (there are breaking changes)
     )
 
     await asyncio.gather(
@@ -122,22 +122,6 @@ async def test_remove_related_app(ops_test: OpsTest):
         )
     except asyncio.exceptions.TimeoutError:
         logger.warning("Timeout reached while blocking!")
-
-    # for app in filter(
-    #     lambda x: x in ops_test.model.applications, [
-    #         tester_app_name, "alertmanager", "grafana", "grafana-agent"
-    #     ]
-    # ):
-    #     cmd = [
-    #         "juju",
-    #         "remove-application",
-    #         "--destroy-storage",
-    #         "--force",
-    #         "--no-wait",
-    #         app,
-    #     ]
-    #     logger.info("Forcibly removing {}".format(app))
-    #     await ops_test.run(*cmd)
 
     await ops_test.model.wait_for_idle(apps=[app_name], timeout=600)
 
