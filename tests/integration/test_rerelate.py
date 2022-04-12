@@ -43,7 +43,7 @@ async def test_build_and_deploy(ops_test: OpsTest, prometheus_charm, prometheus_
     """Build the charm-under-test and deploy it together with related charms."""
     await asyncio.gather(
         ops_test.model.deploy(
-            prometheus_charm, resources=resources, application_name=app_name, num_units=1
+            prometheus_charm, resources=resources, application_name=app_name, num_units=2
         ),
         ops_test.model.deploy(
             prometheus_tester_charm,
