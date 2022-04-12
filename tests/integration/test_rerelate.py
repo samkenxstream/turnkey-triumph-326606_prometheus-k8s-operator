@@ -83,7 +83,9 @@ async def test_remove_relation(ops_test: OpsTest):
         ops_test.model.applications[app_name].remove_relation("metrics-endpoint", tester_app_name),
         ops_test.model.applications[app_name].remove_relation("alertmanager", "alertmanager"),
         ops_test.model.applications[app_name].remove_relation("grafana-source", "grafana"),
-        ops_test.model.applications[app_name].remove_relation("receive-remote-write", "grafana-agent"),
+        ops_test.model.applications[app_name].remove_relation(
+            "receive-remote-write", "grafana-agent"
+        ),
     )
     await ops_test.model.wait_for_idle(apps=[app_name], status="active", timeout=600)
 
