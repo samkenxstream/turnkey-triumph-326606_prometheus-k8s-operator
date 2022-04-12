@@ -100,19 +100,19 @@ async def test_remove_related_app(ops_test: OpsTest):
     except asyncio.exceptions.TimeoutError:
         logger.warning("Timeout reached while blocking!")
 
-    for app in filter(
-        lambda x: x in ops_test.model.applications, [tester_app_name, "alertmanager"]
-    ):
-        cmd = [
-            "juju",
-            "remove-application",
-            "--destroy-storage",
-            "--force",
-            "--no-wait",
-            app,
-        ]
-        logger.info("Forcibly removing {}".format(app))
-        await ops_test.run(*cmd)
+    # for app in filter(
+    #     lambda x: x in ops_test.model.applications, [tester_app_name, "alertmanager"]
+    # ):
+    #     cmd = [
+    #         "juju",
+    #         "remove-application",
+    #         "--destroy-storage",
+    #         "--force",
+    #         "--no-wait",
+    #         app,
+    #     ]
+    #     logger.info("Forcibly removing {}".format(app))
+    #     await ops_test.run(*cmd)
 
     await ops_test.model.wait_for_idle(apps=[app_name], timeout=600)
 
