@@ -133,29 +133,29 @@ async def test_rerelate_app(ops_test: OpsTest, prometheus_tester_charm):
         ops_test.model.deploy(
             prometheus_tester_charm,
             resources=tester_resources,
-            application_name=tester_app_name + "-new",
+            application_name=tester_app_name,
         ),
         ops_test.model.deploy(
             "ch:alertmanager-k8s",
-            application_name="alertmanager-new",
+            application_name="alertmanager",
             channel="edge",
         ),
         ops_test.model.deploy(
             "ch:grafana-k8s",
-            application_name="grafana-new",
+            application_name="grafana",
             channel="edge",
         ),
         ops_test.model.deploy(
             "ch:grafana-agent-k8s",
-            application_name="grafana-agent-new",
+            application_name="grafana-agent",
             channel="edge",
         ),
     )
 
     await asyncio.gather(
-        ops_test.model.add_relation(app_name, tester_app_name + "-new"),
-        ops_test.model.add_relation(app_name, "alertmanager-new"),
-        ops_test.model.add_relation(app_name, "grafana-new:grafana-source"),
-        ops_test.model.add_relation(app_name, "grafana-agent-new:prometheus-remote-write"),
+        ops_test.model.add_relation(app_name, tester_app_name),
+        ops_test.model.add_relation(app_name, "alertmanager"),
+        ops_test.model.add_relation(app_name, "grafana:grafana-source"),
+        ops_test.model.add_relation(app_name, "grafana-agent:prometheus-remote-write"),
     )
     await ops_test.model.wait_for_idle(apps=[app_name], status="active", timeout=600)
