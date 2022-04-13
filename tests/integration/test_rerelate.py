@@ -60,11 +60,11 @@ async def test_build_and_deploy(ops_test: OpsTest, prometheus_charm, prometheus_
             application_name="grafana",
             channel="edge",
         ),
-        # ops_test.model.deploy(
-        #     "ch:grafana-agent-k8s",
-        #     application_name="grafana-agent",
-        #     channel="edge",
-        # ),
+        ops_test.model.deploy(
+            "ch:grafana-agent-k8s",
+            application_name="grafana-agent",
+            channel="edge",
+        ),
         # TODO: add traefik after fetch-lib (there are breaking changes)
     )
 
@@ -72,7 +72,7 @@ async def test_build_and_deploy(ops_test: OpsTest, prometheus_charm, prometheus_
         ops_test.model.add_relation(app_name, tester_app_name),
         ops_test.model.add_relation(app_name, "alertmanager"),
         ops_test.model.add_relation(app_name, "grafana:grafana-source"),
-        # ops_test.model.add_relation(app_name, "grafana-agent:prometheus-remote-write"),
+        ops_test.model.add_relation(app_name, "grafana-agent:prometheus-remote-write"),
     )
     await ops_test.model.wait_for_idle(status="active", timeout=600)
 
@@ -83,9 +83,9 @@ async def test_remove_relation(ops_test: OpsTest):
         ops_test.model.applications[app_name].remove_relation("metrics-endpoint", tester_app_name),
         ops_test.model.applications[app_name].remove_relation("alertmanager", "alertmanager"),
         ops_test.model.applications[app_name].remove_relation("grafana-source", "grafana"),
-        # ops_test.model.applications[app_name].remove_relation(
-        #     "receive-remote-write", "grafana-agent"
-        # ),
+        ops_test.model.applications[app_name].remove_relation(
+            "receive-remote-write", "grafana-agent"
+        ),
     )
     await ops_test.model.wait_for_idle(apps=[app_name], status="active", timeout=600)
 
@@ -96,7 +96,7 @@ async def test_rerelate(ops_test: OpsTest):
         ops_test.model.add_relation(app_name, tester_app_name),
         ops_test.model.add_relation(app_name, "alertmanager"),
         ops_test.model.add_relation(app_name, "grafana:grafana-source"),
-        # ops_test.model.add_relation(app_name, "grafana-agent:prometheus-remote-write"),
+        ops_test.model.add_relation(app_name, "grafana-agent:prometheus-remote-write"),
     )
     await ops_test.model.wait_for_idle(status="active", timeout=600)
 
@@ -107,7 +107,7 @@ async def test_remove_related_app(ops_test: OpsTest):
         ops_test.model.applications[tester_app_name].remove(),
         ops_test.model.applications["alertmanager"].remove(),
         ops_test.model.applications["grafana"].remove(),
-        # ops_test.model.applications["grafana-agent"].remove(),
+        ops_test.model.applications["grafana-agent"].remove(),
     )
     logger.debug("Applications removed. Blocking for 60 seconds then force removing...")
     # Block until it is really gone. Added after an itest failed when tried to redeploy:
@@ -117,7 +117,7 @@ async def test_remove_related_app(ops_test: OpsTest):
             lambda: tester_app_name not in ops_test.model.applications,
             lambda: "alertmanager" not in ops_test.model.applications,
             lambda: "grafana" not in ops_test.model.applications,
-            # lambda: "grafana-agent" not in ops_test.model.applications,
+            lambda: "grafana-agent" not in ops_test.model.applications,
             timeout=60,
         )
     except asyncio.exceptions.TimeoutError:
@@ -145,17 +145,17 @@ async def test_rerelate_app(ops_test: OpsTest, prometheus_tester_charm):
             application_name="grafana-new",
             channel="edge",
         ),
-        # ops_test.model.deploy(
-        #     "ch:grafana-agent-k8s",
-        #     application_name="grafana-agent-new",
-        #     channel="edge",
-        # ),
+        ops_test.model.deploy(
+            "ch:grafana-agent-k8s",
+            application_name="grafana-agent-new",
+            channel="edge",
+        ),
     )
 
     await asyncio.gather(
         ops_test.model.add_relation(app_name, tester_app_name + "-new"),
         ops_test.model.add_relation(app_name, "alertmanager-new"),
         ops_test.model.add_relation(app_name, "grafana-new:grafana-source"),
-        # ops_test.model.add_relation(app_name, "grafana-agent-new:prometheus-remote-write"),
+        ops_test.model.add_relation(app_name, "grafana-agent-new:prometheus-remote-write"),
     )
-    await ops_test.model.wait_for_idle(status="active", timeout=600)
+    await ops_test.model.wait_for_idle(apps=[app_name], status="active", timeout=600)
